@@ -1,0 +1,4 @@
+cron:
+- description: "test cron job"
+  url: /tasks/weekly_check
+  schedule: every monday 8:00

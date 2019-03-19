@@ -1,0 +1,19 @@
+which python2
+virtualenv --python=<PATH FROM WHICH> env
+source ./env/bin/activate
+pip install -t lib --upgrade -r requirements.txt
+
+{
+	dev_appserver.py app.yaml
+}
+OR 
+{
+	gcloud config set project ewenttsapp 
+	gcloud app deploy
+}
+
+
+
+RUNNING TESTS
+gcloud info --format="value(installation.sdk_root)"
+python runner.py <PATH FROM GCLOUD INFO> --test-path ./tests/

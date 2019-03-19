@@ -1,0 +1,9 @@
+queue:
+- name: events-status-to-present
+  rate: 5/s
+  retry_parameters:
+    task_retry_limit: 7
+- name: events-status-to-past
+  rate: 5/s
+  retry_parameters:
+    task_retry_limit: 7
