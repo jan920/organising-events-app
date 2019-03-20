@@ -1,10 +1,17 @@
+"""Module containing functions used by ewentts package
+
+Attributes:
+    logger: Logger for logging in this module
+
+"""
+
 import inspect
 import logging
 import re
 from functools import wraps
 
-from firebase_admin import auth
 from flask import request, abort, jsonify
+from firebase_admin import auth
 from geopy import Point, distance
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
@@ -26,7 +33,7 @@ class NotFoundError(Exception):
     """Raise Error if page|entity not found"""
 
 
-def error_decorator(f):
+def error_decorator(function):
     """Decorator to catch errors and abort them to error handlers
 
     Properties:
@@ -37,14 +44,12 @@ def error_decorator(f):
         if error occurs aborts with appropriate error key
 
     """
-    print("wrapped func")
-    print(f.__name__)
 
-    @wraps(f)
+    @wraps(function)
     def function_wrapper(*args, **kwargs):
         try:
             error_message = False
-            result = f(*args, **kwargs)
+            result = function(*args, **kwargs)
         except BadRequestError as error:
             status = {"type": "Bad Request", "code": 400}
             error_message = str(error)
@@ -60,14 +65,14 @@ def error_decorator(f):
         finally:
             if error_message:
                 err = {
-                 "error_message": error_message,
-                 "source_function": f.__name__,
-                 "source_file": inspect.getmodule(f).__name__,
-                 "code": status["code"],
-                 "title": status["type"]
-                 }
-                return abort(status["code"], err, f)
-            return result
+                    "error_message": error_message,
+                    "source_function": function.__name__,
+                    "source_file": inspect.getmodule(function).__name__,
+                    "code": status["code"],
+                    "title": status["type"]
+                }
+                return abort(status["code"], err, function)
+        return result
     return function_wrapper
 
 
@@ -75,7 +80,7 @@ def error_decorator(f):
 def request_decoded_token():
     """Tries to verify and get decoded token from firebase"""
     try:
-        bearer, token = request.headers.get("Authorization").split(" ")
+        _, token = request.headers.get("Authorization").split(" ")
         logger.info("token received")
         decoded_token = auth.verify_id_token(token)
         logger.info("token decoded")
@@ -186,11 +191,11 @@ def validate_picture_url(image_url):
     """
     try:
         if not re.match(r"(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)", image_url):
-            raise ValueError("image url: %s is not and image", image_url)
+            raise ValueError("image url is not a valid image")
         else:
             return True
     except:
-        raise ValueError("image url: %r received in wrong format", image_url)
+        raise ValueError("image url received in wrong format")
 
 
 @error_decorator
@@ -323,7 +328,7 @@ def paginate_list(received_list, per_page):
     except Exception:
         raise BadRequestError("cursor out of range")
     try:
-        paginated = [received_list[i:i + per_page] for i in range(0, len(received_list), per_page)][cursor + 1]
+        _ = [received_list[i:i + per_page] for i in range(0, len(received_list), per_page)][cursor + 1]
         next_page = cursor + 1
     except:
         logger.info("this is the last page")
@@ -376,15 +381,15 @@ def generate_location_search_boundaries(original_location, search_range=10):
         Dictionary of boundaries: maxlatitude, maxlongitude, minlatitude, minlongitude
     """
     start = Point(original_location)
-    d = distance.VincentyDistance(kilometers=search_range)
+    dist = distance.VincentyDistance(kilometers=search_range)
     boundaries = dict()
-    new_point = d.destination(point=start, bearing=0)
+    new_point = dist.destination(point=start, bearing=0)
     boundaries["maxlatitude"] = new_point.latitude
-    new_point = d.destination(point=start, bearing=90)
+    new_point = dist.destination(point=start, bearing=90)
     boundaries["maxlongitude"] = new_point.longitude
-    new_point = d.destination(point=start, bearing=180)
+    new_point = dist.destination(point=start, bearing=180)
     boundaries["minlatitude"] = new_point.latitude
-    new_point = d.destination(point=start, bearing=270)
+    new_point = dist.destination(point=start, bearing=270)
     boundaries["minlongitude"] = new_point.longitude
     return boundaries
 
@@ -416,5 +421,5 @@ def create_task_change_status_to_past(event_id):
 
 def delete_task(queue_name, task_name):
     """Delete task from queue queue_name by task_name"""
-    q = taskqueue.Queue(queue_name)
-    q.delete_tasks(taskqueue.Task(name=task_name))
+    queue = taskqueue.Queue(queue_name)
+    queue.delete_tasks(taskqueue.Task(name=task_name))

@@ -1,11 +1,17 @@
-import inspect
+"""Module for handling requests on /event endpoints
+
+Attributes:
+    events: flask Blueprint for calling generator endpoints
+
+"""
 
 from flask import Blueprint, jsonify
 
-from ewentts.utils import requires_auth, request_uid, return_jsonified_users, get_body_in_json, return_event, \
-    get_per_page, paginate_list, check_user_authorised
-from utils import create_event, jsonify_event, return_edited_event, logger, return_jsonified_posts, invite_users, \
-    user_attends_event, user_came_to_event, user_left_event
+from ewentts.utils import requires_auth, request_uid, return_jsonified_users,\
+    get_body_in_json, return_event, get_per_page, paginate_list, check_user_authorised
+from .utils import create_event, jsonify_event, return_edited_event, logger,\
+    return_jsonified_posts, invite_users, user_attends_event, user_came_to_event,\
+    user_left_event
 
 events = Blueprint("events", __name__)
 

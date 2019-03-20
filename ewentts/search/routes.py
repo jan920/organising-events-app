@@ -1,9 +1,18 @@
-from flask import Blueprint, jsonify, request, abort
+"""Module for handling requests on /search endpoints
+
+Attributes:
+    search: flask Blueprint for calling main endpoints
+
+"""
+
+from flask import Blueprint, jsonify, request
 
 from ewentts.models import Event
-from ewentts.utils import requires_auth, return_jsonified_events, return_jsonified_users, get_per_page, paginate
-from utils import perform_users_search, logger, perform_events_search_by_name, perform_event_name_query, \
-    perform_events_search_by_day, perform_location_query, perform_events_search_by_datetime
+from ewentts.utils import requires_auth, return_jsonified_events, \
+    return_jsonified_users, get_per_page, paginate
+from .utils import perform_users_search, logger, perform_events_search_by_name, \
+    perform_event_name_query, perform_events_search_by_day, \
+    perform_location_query, perform_events_search_by_datetime
 
 search = Blueprint("search", __name__)
 

@@ -1,7 +1,14 @@
+"""Module for handling requests on /event/<int:event_id>/post endpoints
+
+Attributes:
+    posts: flask Blueprint for calling post endpoints
+
+"""
+
 from flask import request, Blueprint
 
 from ewentts.utils import requires_auth, return_event
-from utils import create_post, jsonify_post
+from .utils import create_post, jsonify_post
 
 posts = Blueprint("posts", __name__)
 

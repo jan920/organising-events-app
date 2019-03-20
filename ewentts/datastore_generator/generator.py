@@ -1,11 +1,25 @@
+"""Module for generating users, events and posts for development
+
+
+This module is only to be used for developmen and for testing,
+the module creates necessary users and events for
+
+
+Attributes:
+    generator: flask Blueprint for calling generator endpoints
+    logger: Logger for logging in datastore_generator package
+
+"""
+
+
 from datetime import datetime, timedelta
 
-import pytz
 import logging
+import pytz
+
 from dateutil.parser import parse
-from firebase_admin import auth
 from flask import Blueprint, jsonify, request
-from google.appengine.api import taskqueue
+from firebase_admin import auth
 from google.appengine.ext import ndb
 
 from ewentts.utils import return_event, create_task_change_status_to_present, create_task_change_status_to_past
@@ -27,7 +41,7 @@ def generate():
     user = User(id=user_id,
                 user_names=["Miroslav", "Matocha"],
                 profile_picture_url="https://i.imgur.com/nqTGipe.jpg",
-                user_email="mira.matocha1234@seznam.cz")
+                user_email="mira.matocha1234456@seznam.cz")
     user_key = user.put()
     start_datetime = datetime.now() + timedelta(days=5)
     start_datetime = timezone.localize(start_datetime)
@@ -186,6 +200,7 @@ def change_status_to_past():
 
 @generator.route('/tasks/search_api_test', methods=["GET"])
 def search_api_test():
+    """test for search API, development only"""
     event_id = 1234
     event = return_event(event_id)
     from google.appengine.api import search
@@ -202,7 +217,7 @@ def search_api_test():
     doc = search.Document(doc_id=str(event_id), fields=fields)
     try:
         add_result = search.Index(name="testsearch").put(doc)
-        add_result[0].id
+        _ = add_result[0].id
     except search.Error:
         print(search.Error)
     for index in search.get_indexes(fetch_schema=True):

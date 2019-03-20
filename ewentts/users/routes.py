@@ -1,18 +1,23 @@
-import inspect
+"""Module for handling requests on /user endpoints
 
-from firebase_admin import auth
+Attributes:
+    users: flask Blueprint for calling user endpoints
+
+"""
+
 from flask import Blueprint, jsonify, request
+from firebase_admin import auth
 from google.appengine.ext import ndb
 
 from ewentts.models import User, DeletedUser
 from ewentts.utils import requires_auth, request_uid, return_jsonified_users, return_jsonified_events, get_per_page, \
     return_user, paginate_list, check_user_authorised
-from utils import create_user, user_exists, jsonify_user, return_edited_user, logger, follow_user
+from .utils import create_user, user_exists, jsonify_user, return_edited_user, logger, follow_user
 
 users = Blueprint("users", __name__)
 
 
-@users.route("/register", methods=["POST"])
+@users.route("/user", methods=["POST"])
 @requires_auth
 def register():
     """

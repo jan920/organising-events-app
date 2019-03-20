@@ -1,4 +1,11 @@
-from google.appengine.ext import ndb
+"""Module for handling requests on /feed endpoints
+
+
+Attributes:
+    feed: flask Blueprint for calling feed endpoints
+    logger: Logger for logging in feed package
+
+"""
 
 import logging
 
@@ -29,25 +36,6 @@ def basic_feed():
     logger.info("feed called")
     per_page = get_per_page()
     query = Event.query().order(Event.start_datetime)
-
-    '''
-        events = query.fetch()
-    id_list = []
-    for event in events:
-        event.event_id = event.key.id()
-        event.put()
-        id_list += [event.event_id]
-        #id_list += [event.put()]
-    print(id_list)
-
-    #id_list = id_list.order(Event._key)
-    query = Event.query() 
-    query = query.filter(Event.event_id.IN(id_list))
-
-    events = query.fetch()
-    print(events)
-    return ""
-    '''
 
     events, next_page = paginate(query, per_page)
 

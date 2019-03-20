@@ -15,15 +15,7 @@
 #    limitations under the License.
 
 # [START runner]
-"""App Engine local test runner example.
-
-This program handles properly importing the App Engine SDK so that test modules
-can use google.appengine.* APIs and the Google App Engine testbed.
-
-Example invocation:
-
-    $ python runner.py ~/google-cloud-sdk
-"""
+"""Module used for running all unittests for ewentts package"""
 
 import argparse
 import os

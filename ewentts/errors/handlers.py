@@ -1,5 +1,12 @@
-from flask import Blueprint, jsonify, make_response
-from utils import create_response, get_error_message
+"""Module for error handling and returning other status codes then 2xx
+
+Module for handling following status codes:
+400, 403, 404, 405, 500
+
+"""
+
+from flask import Blueprint
+from .utils import create_response
 
 errors = Blueprint("errors", __name__)
 

@@ -1,4 +1,10 @@
-import inspect
+"""Module containing functions used by posts/routes.py module
+
+Attributes:
+    logger: Logger for logging in posts package
+
+"""
+
 import logging
 
 from flask import jsonify
@@ -10,6 +16,7 @@ from ewentts.utils import request_uid, error_decorator, BadRequestError
 logger = logging.getLogger("posts")
 
 
+@error_decorator
 def create_post(body, posts_num):
     """Create post of class Post
 

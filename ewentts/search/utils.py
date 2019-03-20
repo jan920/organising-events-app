@@ -1,10 +1,18 @@
+"""Module containing functions used by search/routes.py module
+
+Attributes:
+    logger: Logger for logging in search package
+
+"""
+
 import logging
-from flask import request
+
 from datetime import datetime, date, time, timedelta
+from flask import request
 
 from ewentts.models import User, Event
-from ewentts.utils import paginate, generate_location_search_boundaries, error_decorator, BadRequestError, \
-    validate_location
+from ewentts.utils import paginate, generate_location_search_boundaries, \
+    error_decorator, BadRequestError, validate_location
 
 logger = logging.getLogger("search")
 
@@ -55,7 +63,8 @@ def perform_name_query(query, name):
     """
     next_name = return_next_name(name)
     if next_name:
-        query = query.filter(User.user_names >= name.capitalize(), User.user_names < next_name.capitalize())
+        query = query.filter(User.user_names >= name.capitalize(),
+                             User.user_names < next_name.capitalize())
     else:
         query = query.filter(User.user_names >= name.capitalize())
     return query
@@ -97,7 +106,8 @@ def perform_event_name_query(query, name):
     """
     next_name = return_next_name(name)
     if next_name:
-        query = query.filter(Event.event_name >= name.capitalize(), Event.event_name < next_name.capitalize())
+        query = query.filter(Event.event_name >= name.capitalize(),
+                             Event.event_name < next_name.capitalize())
     else:
         query = query.filter(Event.event_name >= name.capitalize())
     return query
@@ -216,7 +226,7 @@ def perform_location_query(query, point):
         BadRequestError if location or location received out of range or in wrong format
     """
     try:
-        validate_location(point)
+        validate_location(*point)
     except ValueError as e:
         logger.error("location received in wrong format")
         raise BadRequestError(e)
@@ -244,16 +254,20 @@ def perform_location_query(query, point):
     if 0 < longitudes_distance < 180:
         print(boundaries["maxlongitude"])
         print(boundaries["minlongitude"])
-        query = query.filter(Event.longitude > boundaries["minlongitude"], Event.longitude < boundaries["maxlongitude"])
+        query = query.filter(Event.longitude > boundaries["minlongitude"],
+                             Event.longitude < boundaries["maxlongitude"])
     elif longitudes_distance < -180:
         print(boundaries["maxlongitude"])
         print(boundaries["minlongitude"])
-        query = query.filter(Event.longitude > boundaries["minlongitude"], Event.longitude < boundaries["maxlongitude"])
+        query = query.filter(Event.longitude > boundaries["minlongitude"],
+                             Event.longitude < boundaries["maxlongitude"])
     else:
         print(boundaries["minlongitude"])
         print(boundaries["maxlongitude"])
-        query = query.filter(Event.longitude > boundaries["maxlongitude"], Event.longitude < boundaries["minlongitude"])
-    query = query.filter(Event.latitude < boundaries["maxlatitude"], Event.latitude > boundaries["minlatitude"])
+        query = query.filter(Event.longitude > boundaries["maxlongitude"],
+                             Event.longitude < boundaries["minlongitude"])
+    query = query.filter(Event.latitude < boundaries["maxlatitude"],
+                         Event.latitude > boundaries["minlatitude"])
     return query
 
 

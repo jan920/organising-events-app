@@ -1,4 +1,10 @@
-import inspect
+"""Module containing functions used by users/routes.py module
+
+Attributes:
+    logger: Logger for logging in users package
+
+"""
+
 import logging
 import re
 
@@ -175,11 +181,11 @@ def validate_email(email):
     """
     try:
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            raise ValueError("string received: %s is not valid email", email)
+            raise ValueError("string received is not valid email")
         else:
             return True
     except:
-        raise ValueError("email: %r received in wrong format", email)
+        raise ValueError("email received in wrong format", )
 
 
 @error_decorator

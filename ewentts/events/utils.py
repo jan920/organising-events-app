@@ -1,10 +1,17 @@
-import inspect
+"""Module containing functions used by events/routes.py module
+
+Attributes:
+    logger: Logger for logging in events package
+
+"""
+
+
 import logging
 from datetime import datetime, timedelta
 
 import pytz
 from dateutil.parser import parse
-from flask import abort, jsonify
+from flask import jsonify
 from google.appengine.ext import ndb
 
 from ewentts.models import Event, User
@@ -92,7 +99,7 @@ def create_event(body, user_id):
     user = return_user(user_id)
     user.organised_events += [event.key]
     user.put()
-    logger.info("event %s created".format(event.key.id()))
+    logger.info("event {} created".format(event.key.id()))
     return event
 
 
@@ -228,19 +235,23 @@ def edit_end_datetime(event, end_datetime, start_datetime):
 def edit_datetimes(event, body):
     """Edits start_datetime and end_datime of the event
 
-    Check if body contains start_datetime or end datetime, if it does start_datetime or end_datetime of event
+    Check if body contains start_datetime or end datetime,
+    if it does start_datetime or end_datetime of event
     are eddited if valid
 
     :param event: object of class Event
     :param body: json object containing which might contain start_datetime or end_datetime
-    :return: edited event if start_datetime or end_datetime were in body, otherwise return event which was received
+    :return: edited event if start_datetime or end_datetime were in
+             body, otherwise return event which was received
     """
     start_datetime = body.get("start_datetime")
     end_datetime = body.get("end_datetime")
     if start_datetime and end_datetime:
         utc = pytz.utc
-        edit_start_datetime(event, start_datetime, parse(end_datetime).astimezone(utc).replace(tzinfo=None))
-        edit_end_datetime(event, end_datetime, parse(start_datetime).astimezone(utc).replace(tzinfo=None))
+        edit_start_datetime(event, start_datetime,
+                            parse(end_datetime).astimezone(utc).replace(tzinfo=None))
+        edit_end_datetime(event, end_datetime,
+                          parse(start_datetime).astimezone(utc).replace(tzinfo=None))
         create_change_task_to_present_if_event_soon(event)
     elif start_datetime:
         edit_start_datetime(event, start_datetime, event.end_datetime)
@@ -283,7 +294,8 @@ def edit_event_picture_url(event, event_picture_url):
 
     :param event: object of class Event
     :param event_picture_url: string containing url link to a picture
-    :return: edited event if event_picture_url is valid, otherwise abort(400) with string describing the error
+    :return: edited event if event_picture_url is valid,
+             otherwise abort(400) with string describing the error
     """
     try:
         validate_picture_url(event_picture_url)
@@ -323,9 +335,11 @@ def edit_present_event(event, body):
 def edit_future_event(event, body):
     """Edits properties allowed to be changed for future event
 
-    Check if body contains start_datetime, end_datetime, event_name, event_picture_url or description
-    which are only properties of event which can be edited when event's state is future, if it does
-    the properties are edited if valid
+    Check if body contains start_datetime, end_datetime,
+    event_name, event_picture_url or description which are
+    only properties of event which can be edited when
+    event's state is future, if it does the properties are
+    edited if valid
 
     :param event: object of class Event
     :param body: json object containing which might contain start_datetime, end_datetime, event_name,
@@ -375,8 +389,10 @@ def return_edited_event(event, body):
 def validate_start_datetime(start_datetime, end_datetime):
     """Validates start_datetime
 
-    Return True if start_datetime is before end_datetime, start datetime is in the future and difference
-    between start_datetime and end_datetime is no more then 7 days, otherwise return ValueError
+    Return True if start_datetime is before end_datetime,
+    start datetime is in the future and difference between
+    start_datetime and end_datetime is no more then 7 days,
+    otherwise return ValueError
 
 
     :param start_datetime: datetime object
@@ -418,11 +434,13 @@ def validate_end_datetime(end_datetime, start_datetime):
 def invite_users(event, body):
     """Adds users to guest list
 
-    If body contains guest_list users according to the user_id from guest_list are added to events property guest_list
+    If body contains guest_list users according to the user_id
+    from guest_list are added to events property guest_list
 
 
     :param event: object of class Event
-    :param body: json object containing which should contain guest_list, list of user_id of users who
+    :param body: json object containing which should
+    contain guest_list, list of user_id of users who
     are to be invited to the event
     :return: edited event, i
     :raise: BadRequestError: if guest_list not provided in body
@@ -501,7 +519,8 @@ def user_left_event(event):
 
 
 def create_change_task_to_present_if_event_soon(event):
-    """If event starts in next 7 days task which will change its status to present when it starts is created"""
+    """If event starts in next 7 days task which will change
+    its status to present when it starts is created"""
     if event.start_datetime < datetime.now() + timedelta(days=7):
         queue_name = "events-status-to-present"
         task_name = str(event.key.id())

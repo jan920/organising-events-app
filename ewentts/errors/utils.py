@@ -1,3 +1,5 @@
+"""Module containing functions used by handlers.py module"""
+
 from flask import jsonify, make_response
 
 

@@ -1,3 +1,5 @@
+"""Module used for running the app"""
+
 import logging
 
 from ewentts import create_app

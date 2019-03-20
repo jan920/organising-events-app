@@ -19,7 +19,7 @@ class TestRegisterEndpoint(unittest.TestCase):
 
     def testUnauthorizedResponse(self):
         # main
-        self.assertEqual(self.client.post('/register').status_code, 403)
+        self.assertEqual(self.client.post('/user').status_code, 403)
 
 
 class TestViewProfileEndpoint(unittest.TestCase):
