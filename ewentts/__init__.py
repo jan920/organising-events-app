@@ -12,7 +12,7 @@ appengine.monkeypatch()
 def create_app():
     """Return Created app"""
     app = Flask(__name__)
-    cred = credentials.Certificate('ewenttsapp-firebase-adminsdk-ikh1d-9f2e8e24ad.json')
+    cred = credentials.Certificate('serviceAccountKey.json')
     try:
         default_app = firebase_admin.initialize_app(cred)
     except:

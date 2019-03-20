@@ -1,19 +1,27 @@
+INSTALL INSTRUCTIONS:
+
 which python2
 virtualenv --python=<PATH FROM WHICH> env
 source ./env/bin/activate
 pip install -t lib --upgrade -r requirements.txt
 
+
+FOR RUNNING BACKEND LOCALLY:
+
 {
 	dev_appserver.py app.yaml
 }
-OR 
+
+
+FOR DEPLOYING APP TO THE SERVER
+
 {
-	gcloud config set project ewenttsapp 
+	gcloud config set project <PROJECT ID ON GOOGLE CLOUD>
 	gcloud app deploy
 }
 
 
+FOR RUNNING TESTS
 
-RUNNING TESTS
 gcloud info --format="value(installation.sdk_root)"
 python runner.py <PATH FROM GCLOUD INFO> --test-path ./tests/
