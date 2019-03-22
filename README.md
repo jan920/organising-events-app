@@ -18,7 +18,7 @@ Check if user exists and if yes return information about user in json otherwise 
 ###### GET /user/`<userID>`
 Return all info about user
 
-###### POST /user/`<userID`</edit
+###### POST /user/`<userID>`/edit
 Receive body in json and based on that change information about user in database
 
 ###### DELETE /user/`<userID>`
